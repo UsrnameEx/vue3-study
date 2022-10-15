@@ -1,17 +1,23 @@
 <template>
-<div class="app">
-	<PostForm @create="createPost"></PostForm>
-	<PostList :posts="posts" @remove="removePost"></PostList>
-</div>
+	<div class="app">
+		<h1>Страница с постами</h1>
+		<UButton @click="modalVisible = true">Создать пост</UButton>
+		<UModal v-model:show="modalVisible">
+			<PostForm @create="createPost"></PostForm>
+		</UModal>
+		<PostList :posts="posts" @remove="removePost"></PostList>
+	</div>
 </template>
 
 <script>
 import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
+import UModal from "@/components/UI/UModal";
+import UButton from "@/components/UI/UButton";
 
 export default {
 	name: "App",
-	components: {PostList, PostForm},
+	components: {UButton, UModal, PostList, PostForm},
 	data() {
 		return {
 			posts: [
@@ -31,11 +37,13 @@ export default {
 					description: 'JavaScript универсальный язык программирования'
 				}
 			],
+			modalVisible: false
 		}
 	},
 	methods: {
 		createPost(post) {
 			this.posts.push(post);
+			this.modalVisible = false;
 		},
 		
 		removePost(id) {
