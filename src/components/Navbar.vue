@@ -6,6 +6,7 @@
 			<UButton @click="$router.push('/posts')">Посты</UButton>
 			<UButton @click="$router.push('/about')">О сайте</UButton>
 			<UButton @click="$router.push('/store')">Store</UButton>
+			<UButton @click="$router.push('/composition')">Composition</UButton>
 		</div>
 	</div>
 </template>
