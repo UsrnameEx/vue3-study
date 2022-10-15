@@ -1,0 +1,30 @@
+{
+  "status": "ok",
+  "items": [
+    {
+      "id": 1,
+      "title": "JavaScript3",
+      "description": "JavaScript универсальный язык программирования4"
+    },
+    {
+      "id": 2,
+      "title": "JavaScript4",
+      "description": "JavaScript универсальный язык программирования3"
+    },
+    {
+      "id": 3,
+      "title": "JavaScript1",
+      "description": "JavaScript универсальный язык программирования2"
+    },
+    {
+      "id": 4,
+      "title": "JavaScript4",
+      "description": "JavaScript универсальный язык программирования1"
+    },
+    {
+      "id": 5,
+      "title": "JavaScript",
+      "description": "JavaScript универсальный язык программирования0"
+    }
+  ]
+}

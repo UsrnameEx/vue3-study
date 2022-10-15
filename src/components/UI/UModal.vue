@@ -18,7 +18,6 @@ export default {
 	
 	methods: {
 		hideModal() {
-			console.log('hide modal');
 			this.$emit('update:show', false);
 		}
 	},

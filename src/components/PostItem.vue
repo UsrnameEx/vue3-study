@@ -12,10 +12,8 @@
 </template>
 
 <script>
-import UButton from "@/components/UI/UButton";
 export default {
 	name: "PostItem",
-	components: {UButton},
 	props: {
 		post: {
 			type: Object,

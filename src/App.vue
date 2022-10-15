@@ -1,45 +1,50 @@
 <template>
 	<div class="app">
 		<h1>Страница с постами</h1>
-		<UButton @click="modalVisible = true">Создать пост</UButton>
+		<div class="app__buttons">
+			<UButton @click="modalVisible = true">Создать пост</UButton>
+			<USelect v-model="selectedSort" :options="sortOptions"></USelect>
+		</div>
 		<UModal v-model:show="modalVisible">
 			<PostForm @create="createPost"></PostForm>
 		</UModal>
-		<PostList :posts="posts" @remove="removePost"></PostList>
+		<PostList v-if="posts" :posts="posts" @remove="removePost"></PostList>
+		<div v-else>Загрузка ...</div>
 	</div>
 </template>
 
 <script>
 import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
-import UModal from "@/components/UI/UModal";
-import UButton from "@/components/UI/UButton";
-
+import axios from 'axios';
 export default {
 	name: "App",
-	components: {UButton, UModal, PostList, PostForm},
+	components: {PostList, PostForm},
+	
 	data() {
 		return {
-			posts: [
-				{
-					id: 1,
-					title: 'Пост о JavaScript1',
-					description: 'JavaScript универсальный язык программирования'
-				},
-				{
-					id: 2,
-					title: 'Пост о JavaScript2',
-					description: 'JavaScript универсальный язык программирования'
-				},
-				{
-					id: 2,
-					title: 'Пост о JavaScript3',
-					description: 'JavaScript универсальный язык программирования'
-				}
-			],
-			modalVisible: false
+			posts: [],
+			modalVisible: false,
+			selectedSort: '',
+			sortOptions: [
+				{value: 'title', name: 'По названию'},
+				{value: 'description', name: 'По описанию'}
+			]
 		}
 	},
+	
+	mounted() {
+		this.getPosts();
+	},
+	
+	watch: {
+		selectedSort(newValue) {
+			this.posts.sort((a, b) => {
+				return a[newValue]?.localeCompare(b[newValue]);
+			})
+		}
+	},
+	
 	methods: {
 		createPost(post) {
 			this.posts.push(post);
@@ -48,8 +53,18 @@ export default {
 		
 		removePost(id) {
 			this.posts = this.posts.filter(p => p.id !== id);
+		},
+		
+		async getPosts() {
+			setTimeout(async () => {
+				const response = await axios.get('http://localhost:8080/api/posts/getPosts.json');
+				if (response.data.status === 'ok') {
+					this.posts = response.data.items;
+				}
+			}, 1000);
 		}
-	}
+	},
+	
 }
 </script>
 <style>
@@ -61,5 +76,11 @@ export default {
 
 .app {
 	padding: 20px;
+}
+
+.app__buttons {
+	display: flex;
+	justify-content: space-between;
+	margin: 15px 0;
 }
 </style>
