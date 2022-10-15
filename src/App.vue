@@ -8,7 +8,10 @@
 		<UModal v-model:show="modalVisible">
 			<PostForm @create="createPost"></PostForm>
 		</UModal>
-		<PostList v-if="posts" :posts="posts" @remove="removePost"></PostList>
+		<PostList v-if="posts.length > 0"
+		          :posts="sortedPosts"
+		          @remove="removePost"
+		></PostList>
 		<div v-else>Загрузка ...</div>
 	</div>
 </template>
@@ -37,11 +40,11 @@ export default {
 		this.getPosts();
 	},
 	
-	watch: {
-		selectedSort(newValue) {
-			this.posts.sort((a, b) => {
-				return a[newValue]?.localeCompare(b[newValue]);
-			})
+	computed: {
+		sortedPosts() {
+			return [...this.posts].sort((a, b) => {
+				return a[this.selectedSort]?.localeCompare(b[this.selectedSort]);
+			});
 		}
 	},
 	
