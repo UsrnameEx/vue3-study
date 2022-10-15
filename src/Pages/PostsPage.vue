@@ -14,7 +14,7 @@
 		          @remove="removePost"
 		></PostList>
 		<div v-else>Загрузка ...</div>
-		<div ref="observer" class="observer"></div>
+		<div v-intersection="getMorePosts" class="observer"></div>
 	</div>
 </template>
 
@@ -38,29 +38,14 @@ export default {
 				{value: 'body', name: 'По описанию'}
 			],
 			searchQuery: '',
-			page: 0,
+			page: 1,
 			limit: 10,
 			countPages: 1
 		}
 	},
 	
 	mounted() {
-		//this.getPosts();
-		
-		const options = {
-			rootMargin: '0px',
-			threshold: 1.0
-		}
-		
-		const callback = (entries, observer) => {
-			if(entries[0].isIntersecting){
-				this.page++;
-				this.getPosts();
-			}
-		};
-		
-		const observer = new IntersectionObserver(callback, options);
-		observer.observe(this.$refs.observer);
+		this.getPosts();
 	},
 	
 	computed: {
@@ -97,6 +82,12 @@ export default {
 			
 			this.posts = [...this.posts, ...response.data];
 		},
+		
+		async getMorePosts() {
+			this.page++;
+			
+			await this.getPosts();
+		}
 	},
 	
 }
