@@ -14,17 +14,7 @@
 		          @remove="removePost"
 		></PostList>
 		<div v-else>Загрузка ...</div>
-		<div v-if="countPages > 1" class="page__wrapper">
-			<div
-					v-for="pageNum in countPages"
-					:key="page"
-					class="page"
-					:class="{
-						'page__currentPage': pageNum === page
-					}"
-					@click="changePage(pageNum)"
-			>{{ pageNum }}</div>
-		</div>
+		<div ref="observer" class="observer"></div>
 	</div>
 </template>
 
@@ -33,6 +23,7 @@ import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 import axios from 'axios';
 import UInput from "@/components/UI/UInput";
+
 export default {
 	name: "App",
 	components: {UInput, PostList, PostForm},
@@ -47,14 +38,29 @@ export default {
 				{value: 'body', name: 'По описанию'}
 			],
 			searchQuery: '',
-			page: 1,
+			page: 0,
 			limit: 10,
 			countPages: 1
 		}
 	},
 	
 	mounted() {
-		this.getPosts();
+		//this.getPosts();
+		
+		const options = {
+			rootMargin: '0px',
+			threshold: 1.0
+		}
+		
+		const callback = (entries, observer) => {
+			if(entries[0].isIntersecting){
+				this.page++;
+				this.getPosts();
+			}
+		};
+		
+		const observer = new IntersectionObserver(callback, options);
+		observer.observe(this.$refs.observer);
 	},
 	
 	computed: {
@@ -80,25 +86,17 @@ export default {
 		},
 		
 		async getPosts() {
-			setTimeout(async () => {
-				const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-					params: {
-						_page: this.page,
-						_limit: this.limit
-					}
-				});
-				
-				this.countPages = Math.ceil(response.headers['x-total-count'] / this.limit);
-				
-				this.posts = response.data;
-			}, 1000);
+			const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+				params: {
+					_page: this.page,
+					_limit: this.limit
+				}
+			});
+			
+			this.countPages = Math.ceil(response.headers['x-total-count'] / this.limit);
+			
+			this.posts = [...this.posts, ...response.data];
 		},
-		
-		changePage(pageNum) {
-			this.page = pageNum;
-			this.posts = [];
-			this.getPosts();
-		}
 	},
 	
 }
@@ -120,18 +118,8 @@ export default {
 	margin: 15px 0;
 }
 
-.page__wrapper {
-	display: flex;
-	margin-top: 15px;
-}
-
-.page {
-	border: 1px solid black;
-	padding: 10px;
-	cursor: pointer;
-}
-
-.page__currentPage {
-	border: 2px solid teal;
+.observer {
+	height: 30px;
+	background: green;
 }
 </style>
