@@ -1,6 +1,7 @@
 <template>
 	<div class="app">
 		<h1>Страница с постами</h1>
+		<UInput v-model="searchQuery"></UInput>
 		<div class="app__buttons">
 			<UButton @click="modalVisible = true">Создать пост</UButton>
 			<USelect v-model="selectedSort" :options="sortOptions"></USelect>
@@ -9,7 +10,7 @@
 			<PostForm @create="createPost"></PostForm>
 		</UModal>
 		<PostList v-if="posts.length > 0"
-		          :posts="sortedPosts"
+		          :posts="sortAndSearch"
 		          @remove="removePost"
 		></PostList>
 		<div v-else>Загрузка ...</div>
@@ -20,9 +21,10 @@
 import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 import axios from 'axios';
+import UInput from "@/components/UI/UInput";
 export default {
 	name: "App",
-	components: {PostList, PostForm},
+	components: {UInput, PostList, PostForm},
 	
 	data() {
 		return {
@@ -32,7 +34,8 @@ export default {
 			sortOptions: [
 				{value: 'title', name: 'По названию'},
 				{value: 'description', name: 'По описанию'}
-			]
+			],
+			searchQuery: ''
 		}
 	},
 	
@@ -45,6 +48,10 @@ export default {
 			return [...this.posts].sort((a, b) => {
 				return a[this.selectedSort]?.localeCompare(b[this.selectedSort]);
 			});
+		},
+		
+		sortAndSearch() {
+			return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
 		}
 	},
 	
