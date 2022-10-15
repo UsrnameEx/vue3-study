@@ -7,6 +7,7 @@
 		</div>
 		
 		<div class="post__buttons">
+			<UButton @click="$router.push(`/posts/${post.id}`)">Открыть</UButton>
 			<UButton @click="$emit('remove', post.id)">Удалить</UButton>
 		</div>
 	</div>
@@ -32,5 +33,9 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+}
+
+.post__buttons {
+	display: flex;
 }
 </style>
