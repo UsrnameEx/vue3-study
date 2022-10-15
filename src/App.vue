@@ -14,6 +14,17 @@
 		          @remove="removePost"
 		></PostList>
 		<div v-else>Загрузка ...</div>
+		<div v-if="countPages > 1" class="page__wrapper">
+			<div
+					v-for="pageNum in countPages"
+					:key="page"
+					class="page"
+					:class="{
+						'page__currentPage': pageNum === page
+					}"
+					@click="changePage(pageNum)"
+			>{{ pageNum }}</div>
+		</div>
 	</div>
 </template>
 
@@ -33,9 +44,12 @@ export default {
 			selectedSort: '',
 			sortOptions: [
 				{value: 'title', name: 'По названию'},
-				{value: 'description', name: 'По описанию'}
+				{value: 'body', name: 'По описанию'}
 			],
-			searchQuery: ''
+			searchQuery: '',
+			page: 1,
+			limit: 10,
+			countPages: 1
 		}
 	},
 	
@@ -67,11 +81,23 @@ export default {
 		
 		async getPosts() {
 			setTimeout(async () => {
-				const response = await axios.get('http://localhost:8080/api/posts/getPosts.json');
-				if (response.data.status === 'ok') {
-					this.posts = response.data.items;
-				}
+				const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+					params: {
+						_page: this.page,
+						_limit: this.limit
+					}
+				});
+				
+				this.countPages = Math.ceil(response.headers['x-total-count'] / this.limit);
+				
+				this.posts = response.data;
 			}, 1000);
+		},
+		
+		changePage(pageNum) {
+			this.page = pageNum;
+			this.posts = [];
+			this.getPosts();
 		}
 	},
 	
@@ -92,5 +118,20 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	margin: 15px 0;
+}
+
+.page__wrapper {
+	display: flex;
+	margin-top: 15px;
+}
+
+.page {
+	border: 1px solid black;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.page__currentPage {
+	border: 2px solid teal;
 }
 </style>

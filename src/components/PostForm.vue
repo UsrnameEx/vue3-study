@@ -2,7 +2,7 @@
 	<form @submit.prevent>
 		<h4>Создание поста</h4>
 		<UInput v-model="post.title" type="text" placeholder="Название"></UInput>
-		<UInput v-model="post.description" type="text" placeholder="Описание"></UInput>
+		<UInput v-model="post.body" type="text" placeholder="Описание"></UInput>
 		<UButton @click="createPost" class="btn__create">Создать</UButton>
 	</form>
 </template>
@@ -14,7 +14,7 @@ export default {
 		return {
 			post: {
 				title: '',
-				description: ''
+				body: ''
 			}
 		}
 	},
@@ -27,7 +27,7 @@ export default {
 			
 			this.post = {
 				title: '',
-				description: ''
+				body: ''
 			}
 		}
 	}
